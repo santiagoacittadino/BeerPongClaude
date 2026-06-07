@@ -11,13 +11,16 @@ const io = new Server(httpServer, {
   cors: { origin: '*', methods: ['GET', 'POST'] },
 });
 
-// Assets served from the project root /assets folder
-// __dirname = server/src → ../../assets = project root assets/
-app.use('/assets', express.static(path.join(__dirname, '../../assets')));
+// Both `npm run dev` and `npm start` execute with cwd = server/,
+// so paths are resolved relative to the current working directory
+// (robust across ts-node dev mode and compiled dist/ production builds).
+const projectRoot = path.resolve(process.cwd(), '..');
+
+app.use('/assets', express.static(path.join(projectRoot, 'assets')));
 
 // Production: serve built client
 if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(__dirname, '../../client/dist');
+  const distPath = path.join(projectRoot, 'client/dist');
   app.use(express.static(distPath));
   app.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
 }
