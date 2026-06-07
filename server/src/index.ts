@@ -11,10 +11,20 @@ const io = new Server(httpServer, {
   cors: { origin: '*', methods: ['GET', 'POST'] },
 });
 
-// Both `npm run dev` and `npm start` execute with cwd = server/,
-// so paths are resolved relative to the current working directory
-// (robust across ts-node dev mode and compiled dist/ production builds).
-const projectRoot = path.resolve(process.cwd(), '..');
+// Locate the project root by walking up from this file until we find the
+// `assets/` folder. This is robust regardless of whether we're running the
+// TS source directly (tsx, __dirname = server/src) or the compiled output
+// (node, __dirname = server/dist/server/src), and regardless of cwd.
+function findProjectRoot(start: string): string {
+  let dir = start;
+  for (let i = 0; i < 8; i++) {
+    if (require('fs').existsSync(path.join(dir, 'assets'))) return dir;
+    dir = path.dirname(dir);
+  }
+  throw new Error(`Could not locate project root (assets/) starting from ${start}`);
+}
+
+const projectRoot = findProjectRoot(__dirname);
 
 app.use('/assets', express.static(path.join(projectRoot, 'assets')));
 
