@@ -3,6 +3,7 @@
 class AudioManager {
   private ctx: AudioContext | null = null;
   private sounds = new Map<string, HTMLAudioElement>();
+  private bgm: HTMLAudioElement | null = null;
 
   private getCtx(): AudioContext {
     if (!this.ctx) this.ctx = new AudioContext();
@@ -56,6 +57,23 @@ class AudioManager {
       osc.start(t);
       osc.stop(t + 0.1);
     });
+  }
+
+  // Background music — loops at low volume, starts on first user interaction
+  startBGM(): void {
+    if (this.bgm) return; // already started
+    const audio = new Audio('/assets/Paddle_Rally.mp3');
+    audio.loop = true;
+    audio.volume = 0.12;
+    audio.play().catch(() => {});
+    this.bgm = audio;
+  }
+
+  stopBGM(): void {
+    if (!this.bgm) return;
+    this.bgm.pause();
+    this.bgm.currentTime = 0;
+    this.bgm = null;
   }
 
   // Victory fanfare

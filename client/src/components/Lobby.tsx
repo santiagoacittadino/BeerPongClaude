@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { audioManager } from '../audio/audioManager';
 
 function genRoomId(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -11,11 +12,13 @@ export default function Lobby() {
   const [joinCode, setJoinCode] = useState('');
 
   const createRoom = () => {
+    audioManager.startBGM();
     const id = genRoomId();
     navigate(`/room/${id}`);
   };
 
   const joinRoom = () => {
+    audioManager.startBGM();
     const code = joinCode.trim().toUpperCase();
     if (code.length >= 4) navigate(`/room/${code}`);
   };
