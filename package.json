@@ -2,11 +2,12 @@
   "name": "guille-vs-beer",
   "version": "1.0.0",
   "private": true,
+  "workspaces": ["server", "client"],
   "scripts": {
-    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
-    "dev": "concurrently --names \"SERVER,CLIENT\" --prefix-colors \"magenta,cyan\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "build": "npm run build --prefix server && npm run build --prefix client",
-    "start": "NODE_ENV=production npm run start --prefix server"
+    "install:all": "npm install",
+    "dev": "concurrently --names \"SERVER,CLIENT\" --prefix-colors \"magenta,cyan\" \"npm run dev --workspace=server\" \"npm run dev --workspace=client\"",
+    "build": "npm run build --workspace=server && npm run build --workspace=client",
+    "start": "NODE_ENV=production npm run start --workspace=server"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
